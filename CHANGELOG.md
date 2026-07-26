@@ -5,6 +5,13 @@ All notable changes to Modular Maze Engine are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and releases use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-07-27
+
+### Changed
+
+- Updated JavaCC from 7.0.12 to 7.0.13.
+- Updated the Jython standalone runtime from 2.7.3 to 2.7.4.
+
 ## [1.0.0] - 2026-07-27
 
 ### Added
@@ -34,4 +41,5 @@ and releases use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The former position-only undo control, which could not safely restore
   inventory, obstacle, script, or plugin state.
 
+[1.0.1]: https://github.com/Himath2002/modular-maze-engine/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Himath2002/modular-maze-engine/releases/tag/v1.0.0
