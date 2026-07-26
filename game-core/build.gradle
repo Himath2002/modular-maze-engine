@@ -1,0 +1,57 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    api project(':game-api')
+
+    implementation 'net.java.dev.javacc:javacc:7.0.12'
+    implementation 'org.python:jython-standalone:2.7.3'
+
+    runtimeOnly project(':plugins:penalty')
+    runtimeOnly project(':plugins:reveal')
+    runtimeOnly project(':plugins:teleport')
+}
+
+def generatedParserDirectory = layout.buildDirectory.dir('generated/sources/javacc/main')
+
+tasks.register('generateMazeParser', JavaExec) {
+    group = 'build'
+    description = 'Generates the maze map parser from the JavaCC grammar.'
+    classpath = configurations.compileClasspath
+    mainClass = 'org.javacc.parser.Main'
+
+    inputs.file('src/main/javacc/io/github/himath2002/maze/parser/MazeMap.jj')
+    outputs.dir(generatedParserDirectory)
+
+    doFirst {
+        generatedParserDirectory.get().asFile.mkdirs()
+    }
+
+    args = [
+        "-OUTPUT_DIRECTORY=${generatedParserDirectory.get().asFile}",
+        'src/main/javacc/io/github/himath2002/maze/parser/MazeMap.jj'
+    ]
+}
+
+sourceSets {
+    main {
+        java.srcDir(generatedParserDirectory)
+    }
+}
+
+tasks.named('compileJava') {
+    dependsOn tasks.named('generateMazeParser')
+}
+
+application {
+    mainClass = 'io.github.himath2002.maze.app.MazeApplication'
+}
+
+tasks.named('run') {
+    if (!project.hasProperty('map')) {
+        args 'maps/coastal-treasure.utf8.map'
+    } else {
+        args project.property('map')
+    }
+}

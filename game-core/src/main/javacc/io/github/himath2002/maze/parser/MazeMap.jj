@@ -1,0 +1,212 @@
+options {
+    LOOKAHEAD = 1;
+    STATIC = false;
+    SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
+    BUILD_PARSER = true;
+    BUILD_TOKEN_MANAGER = true;
+    JAVA_UNICODE_ESCAPE = true;
+}
+
+PARSER_BEGIN(MazeMapParser)
+
+package io.github.himath2002.maze.parser;
+
+import io.github.himath2002.maze.api.model.Item;
+import io.github.himath2002.maze.api.model.Obstacle;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Parser state and validation for the maze map domain-specific language.
+ */
+public class MazeMapParser {
+    private int width = -1, height = -1;
+    private int startX = -1, startY = -1;
+    private int goalX = -1, goalY = -1;
+
+    private final List<Item> items = new ArrayList<>();
+    private final List<Obstacle> obstacles = new ArrayList<>();
+    private final List<String> pluginClasses = new ArrayList<>();
+    private final List<String> scriptCodes = new ArrayList<>();
+
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
+    public int getStartX() { return startX; }
+    public int getStartY() { return startY; }
+    public int getGoalX() { return goalX; }
+    public int getGoalY() { return goalY; }
+    public List<Item> getItems() { return Collections.unmodifiableList(items); }
+    public List<Obstacle> getObstacles() { return Collections.unmodifiableList(obstacles); }
+    public List<String> getPluginClasses() { return Collections.unmodifiableList(pluginClasses); }
+    public List<String> getScriptCodes() { return Collections.unmodifiableList(scriptCodes); }
+
+    private String unquote(String quoted) {
+        if (quoted == null) return null;
+        if (quoted.length() >= 2 && quoted.charAt(0) == '"' && quoted.charAt(quoted.length()-1) == '"') {
+            return quoted.substring(1, quoted.length() - 1);
+        }
+        return quoted;
+    }
+
+    public void parse(Reader reader) throws ParseException {
+        ReInit(reader);
+        Map();
+        validate();
+    }
+
+    private void validate() {
+        if (width < 1 || height < 1) {
+            throw new IllegalStateException("Map size must be positive");
+        }
+        requireInBounds(startX, startY, "start");
+        requireInBounds(goalX, goalY, "goal");
+
+        for (Item item : items) {
+            for (int[] position : item.getPositions()) {
+                requireInBounds(position[0], position[1], "item " + item.getName());
+            }
+        }
+        for (Obstacle obstacle : obstacles) {
+            for (int[] position : obstacle.getPositions()) {
+                requireInBounds(position[0], position[1], "obstacle");
+            }
+        }
+    }
+
+    private void requireInBounds(int x, int y, String entity) {
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            throw new IllegalStateException(
+                entity + " position is outside the " + width + "x" + height + " map: (" + x + ", " + y + ")"
+            );
+        }
+    }
+}
+
+PARSER_END(MazeMapParser)
+
+TOKEN : {
+    < SIZE_TOKEN : "size" >
+  | < START_TOKEN : "start" >
+  | < GOAL_TOKEN : "goal" >
+  | < ITEM_TOKEN : "item" >
+  | < OBSTACLE_TOKEN : "obstacle" >
+  | < AT_TOKEN : "at" >
+  | < MESSAGE_TOKEN : "message" >
+  | < REQUIRES_TOKEN : "requires" >
+  | < PLUGIN_TOKEN : "plugin" >
+  | < SCRIPT_TOKEN : "script" >
+  | < LPAREN : "(" >
+  | < RPAREN : ")" >
+  | < LBRACE : "{" >
+  | < RBRACE : "}" >
+  | < SEMICOLON : ";" >
+  | < COMMA : "," >
+  | < BANG : "!" >
+  | < DOT : "." >
+  | < NUMBER : (["0"-"9"])+ >
+  | < STRING : "\"" (~["\""] | "\\\"")* "\"" >
+  | < ID : (["a"-"z","A"-"Z","_"]) (["a"-"z","A"-"Z","0"-"9","_"])* >
+  | < SCRIPT_CONTENT : "!{" (~["}"] | "\n" | "\r")* "}" >
+}
+
+SKIP : {
+    " "
+  | "\t"
+  | "\n"
+  | "\r"
+  | "\f"
+}
+
+void Map() : {} {
+    ( LOOKAHEAD(2) Declaration() )*
+}
+
+void Declaration() : {} {
+    (
+        SizeDecl() |
+        StartDecl() |
+        GoalDecl() |
+        ItemDecl() |
+        ObstacleDecl() |
+        PluginDecl() |
+        ScriptDecl()
+    )
+    ( <SEMICOLON> )*
+}
+
+void SizeDecl() : { Token w; Token h; } {
+    <SIZE_TOKEN> <LPAREN> w=<NUMBER> <COMMA> h=<NUMBER> <RPAREN>
+    { this.width = Integer.parseInt(w.image); this.height = Integer.parseInt(h.image); }
+}
+
+void StartDecl() : { Token x; Token y; } {
+    <START_TOKEN> <LPAREN> x=<NUMBER> <COMMA> y=<NUMBER> <RPAREN>
+    { this.startX = Integer.parseInt(x.image); this.startY = Integer.parseInt(y.image); }
+}
+
+void GoalDecl() : { Token x; Token y; } {
+    <GOAL_TOKEN> <LPAREN> x=<NUMBER> <COMMA> y=<NUMBER> <RPAREN>
+    { this.goalX = Integer.parseInt(x.image); this.goalY = Integer.parseInt(y.image); }
+}
+
+void ItemDecl() : { Token name; List<int[]> positions = new ArrayList<>(); Token messageTok = null; } {
+    <ITEM_TOKEN> name=<STRING> <LBRACE>
+        <AT_TOKEN> positions = LocationList() ( <COMMA> | <SEMICOLON> )?
+        ( LOOKAHEAD(2) messageTok = MessageDecl() )?
+    <RBRACE>
+    {
+        Item item = new Item(unquote(name.image), messageTok != null ? unquote(messageTok.image) : "");
+        item.setPositions(positions);
+        items.add(item);
+    }
+}
+
+Token MessageDecl() : { Token msg; } {
+    <MESSAGE_TOKEN> msg=<STRING> ( <SEMICOLON> )? { return msg; }
+}
+
+List<int[]> LocationList() : { Token x; Token y; List<int[]> list = new ArrayList<>(); } {
+    <LPAREN> x=<NUMBER> <COMMA> y=<NUMBER> <RPAREN>
+    { list.add(new int[]{Integer.parseInt(x.image), Integer.parseInt(y.image)}); }
+    ( LOOKAHEAD(2) <COMMA> <LPAREN> x=<NUMBER> <COMMA> y=<NUMBER> <RPAREN>
+      { list.add(new int[]{Integer.parseInt(x.image), Integer.parseInt(y.image)}); } )*
+    { return list; }
+}
+
+void ObstacleDecl() : { List<int[]> positions = new ArrayList<>(); List<String> required = new ArrayList<>(); } {
+    <OBSTACLE_TOKEN> <LBRACE>
+        <AT_TOKEN> positions = LocationList() ( <COMMA> | <SEMICOLON> )?
+        required = RequiresDecl()
+    <RBRACE>
+    {
+        Obstacle obs = new Obstacle(required);
+        obs.setPositions(positions);
+        obstacles.add(obs);
+    }
+}
+
+List<String> RequiresDecl() : { List<String> lst = new ArrayList<>(); } {
+    <REQUIRES_TOKEN> lst = StringList() ( <SEMICOLON> )? { return lst; }
+}
+
+List<String> StringList() : { Token s; List<String> list = new ArrayList<>(); } {
+    s = <STRING> { list.add(unquote(s.image)); }
+    ( <COMMA> s = <STRING> { list.add(unquote(s.image)); } )*
+    { return list; }
+}
+
+void PluginDecl() : { Token first; Token next; StringBuilder sb = new StringBuilder(); } {
+    <PLUGIN_TOKEN> first = <ID> { sb.append(first.image); }
+    ( <DOT> next = <ID> { sb.append('.').append(next.image); } )*
+    { pluginClasses.add(sb.toString()); }
+}
+
+void ScriptDecl() : { Token body; } {
+    <SCRIPT_TOKEN> body=<SCRIPT_CONTENT>
+    {
+        String scriptContent = body.image.substring(2, body.image.length() - 1).trim();
+        scriptCodes.add(scriptContent);
+    }
+}

@@ -1,0 +1,22 @@
+# Gradle
+.gradle/
+**/build/
+
+# Runtime state
+saves/
+*.ser
+*.log
+hs_err_pid*.log
+
+# IDEs
+.idea/
+.settings/
+.classpath
+.project
+*.iml
+.vscode/
+**/bin/
+
+# Operating systems
+.DS_Store
+Thumbs.db

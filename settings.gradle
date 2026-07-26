@@ -1,0 +1,7 @@
+rootProject.name = 'modular-maze-engine'
+
+include 'game-api'
+include 'game-core'
+include 'plugins:penalty'
+include 'plugins:reveal'
+include 'plugins:teleport'
