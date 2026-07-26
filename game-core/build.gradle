@@ -5,8 +5,8 @@ plugins {
 dependencies {
     api project(':game-api')
 
-    implementation 'net.java.dev.javacc:javacc:7.0.12'
-    implementation 'org.python:jython-standalone:2.7.3'
+    implementation 'net.java.dev.javacc:javacc:7.0.13'
+    implementation 'org.python:jython-standalone:2.7.4'
 
     runtimeOnly project(':plugins:penalty')
     runtimeOnly project(':plugins:reveal')
