@@ -5,6 +5,13 @@ All notable changes to Modular Maze Engine are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and releases use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-07-28
+
+### Security
+
+- Updated PMD from 7.15.0 to 7.22.0, resolving reported vulnerabilities in
+  the transitive PMD core and Apache Commons Lang tooling dependencies.
+
 ## [1.0.1] - 2026-07-27
 
 ### Changed
@@ -41,5 +48,6 @@ and releases use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The former position-only undo control, which could not safely restore
   inventory, obstacle, script, or plugin state.
 
+[1.0.2]: https://github.com/Himath2002/modular-maze-engine/releases/tag/v1.0.2
 [1.0.1]: https://github.com/Himath2002/modular-maze-engine/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Himath2002/modular-maze-engine/releases/tag/v1.0.0

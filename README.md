@@ -10,7 +10,7 @@ embed Jython behavior, and drive a localized Swing experience.**
 [![Java CI](https://github.com/Himath2002/modular-maze-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/Himath2002/modular-maze-engine/actions/workflows/ci.yml)
 [![Java 17](https://img.shields.io/badge/Java-17-ED6C4F?logo=openjdk&logoColor=white)](https://adoptium.net/temurin/releases/?version=17)
 [![Gradle 9.6.1](https://img.shields.io/badge/Gradle-9.6.1-02303A?logo=gradle&logoColor=white)](https://gradle.org/)
-[![PMD 7.15](https://img.shields.io/badge/PMD-7.15-1A7F72)](https://pmd.github.io/)
+[![PMD 7.22](https://img.shields.io/badge/PMD-7.22-1A7F72)](https://pmd.github.io/)
 [![Latest release](https://img.shields.io/github/v/release/Himath2002/modular-maze-engine?label=release&color=143F3A)](https://github.com/Himath2002/modular-maze-engine/releases)
 
 [Explore the architecture](#architecture) ·
@@ -271,7 +271,7 @@ This command:
 
 - regenerates the JavaCC parser from `MazeMap.jj`;
 - compiles the API, core, and three plugin modules with Java 17 and `-Xlint:all`;
-- runs PMD 7.15 against authored Java source; and
+- runs PMD 7.22 against authored Java source; and
 - executes any module tests registered with Gradle.
 
 The current codebase does not claim a comprehensive automated gameplay test

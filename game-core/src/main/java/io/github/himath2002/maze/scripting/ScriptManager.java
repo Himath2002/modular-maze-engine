@@ -60,6 +60,7 @@ public final class ScriptManager {
         scripts.clear();
     }
 
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     private void loadScript(
         ScriptEngine engine,
         Invocable invocable,
@@ -88,6 +89,7 @@ public final class ScriptManager {
         }
     }
 
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     private void safely(Runnable event) {
         try {
             event.run();

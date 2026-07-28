@@ -357,6 +357,7 @@ public final class MazeGame implements GameAPI {
         });
     }
 
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public void shutdown() {
         if (resourcesClosed) {
             return;
