@@ -1,6 +1,6 @@
 <div align="center">
 
-![Modular Maze Engine — extensible desktop engine](docs/hero.svg)
+![Modular Maze Engine - extensible desktop engine](docs/hero.svg)
 
 # Modular Maze Engine
 
@@ -47,7 +47,7 @@ Everything runs locally; the application has no network dependency at runtime.
 | Persistence | Complete serializable session snapshots stored locally |
 | Localization | English, French, Sinhala, Spanish, German, Japanese, Italian, Chinese, Russian, and Pig Latin bundles |
 | Quality gate | Parser generation, compilation, and PMD across authored Java source |
-| Runtime services | None — maps, saves, artwork, and logic remain on-device |
+| Runtime services | None - maps, saves, artwork, and logic remain on-device |
 
 ## Experience
 
@@ -219,7 +219,7 @@ currently loaded map.
 
 ### Prerequisite
 
-- JDK 17 — no separate Gradle installation is required.
+- JDK 17 - no separate Gradle installation is required.
 
 Verify the toolchain:
 

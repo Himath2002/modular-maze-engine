@@ -75,7 +75,7 @@ public final class MazeWindow extends JFrame {
     private final JLabel inventoryTitle = new JLabel();
     private final JLabel dateLabel = new JLabel();
     private final JLabel daysElapsedLabel = new JLabel();
-    private final JLabel penaltyCountdownLabel = new JLabel("Penalty: —");
+    private final JLabel penaltyCountdownLabel = new JLabel("Penalty: -");
     private final JLabel prizeProgressLabel = new JLabel("Prize: 0/5");
     private final JLabel revealStatusLabel = new JLabel();
     private final JLabel teleportBadge = new JLabel();
@@ -451,7 +451,7 @@ public final class MazeWindow extends JFrame {
 
     private void updateInventory() {
         List<String> items = game.getInventory();
-        inventoryArea.setText(items.isEmpty() ? "—" : String.join("\n", items));
+        inventoryArea.setText(items.isEmpty() ? "-" : String.join("\n", items));
         inventoryArea.setCaretPosition(0);
     }
 
@@ -532,7 +532,7 @@ public final class MazeWindow extends JFrame {
 
     public void updatePenaltyCountdown(int seconds) {
         penaltyCountdownLabel.setText(
-            seconds < 0 ? "Penalty: —" : "Penalty: " + seconds + "s"
+            seconds < 0 ? "Penalty: -" : "Penalty: " + seconds + "s"
         );
     }
 

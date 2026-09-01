@@ -36,7 +36,7 @@ public final class RevealPlugin implements Plugin, ItemCallback {
         api.notifyRevealActivated();
         JOptionPane.showMessageDialog(
             null,
-            "Map acquired — goal and collectibles revealed.",
+            "Map acquired - goal and collectibles revealed.",
             "Reveal",
             JOptionPane.INFORMATION_MESSAGE
         );
